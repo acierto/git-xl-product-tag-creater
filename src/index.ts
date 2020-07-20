@@ -16,24 +16,36 @@ const getNewTagVersion = () => {
     return `${folderName}-${tagVersionPart}`;
 };
 
-const executeCommand = (command: string) => {
-    exec(command, (error, stdout, stderr) => {
-        console.log(`Executing: ${command}`);
+const executeCommand = (command: string) =>
+    new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            console.log(`Executing: ${command}`);
 
-        if (error) {
-            console.log(`error: ${error.message}`);
-        } else if (stderr) {
-            console.log(`stderr: ${stderr}`);
-        }
+            if (error) {
+                console.log(`error: ${error.message}`);
+                reject(error);
+            } else if (stderr) {
+                console.log(`stderr: ${stderr}`);
+                reject(stderr);
+            } else {
+                resolve(stdout);
+            }
+        });
     });
-};
 
-const createTag = (newTagVersion: string) => {
-    executeCommand(`git tag ${newTagVersion}`);
-    executeCommand(`git push origin ${newTagVersion}`);
+const createTag = async (newTagVersion: string) => {
+    await executeCommand(`git tag ${newTagVersion}`);
+    await executeCommand(`git push origin ${newTagVersion}`);
 }
 
-(() => {
+const checkIfTagExists = async (newTagVersion: string) => {
+    await executeCommand('git fetch --prune');
+    return '' !== await executeCommand(`git tag -l ${newTagVersion}`);
+}
+
+(async () => {
     const newTagVersion = getNewTagVersion();
-    createTag(newTagVersion);
+    if (await checkIfTagExists(newTagVersion)) {
+        await createTag(newTagVersion);
+    }
 })();
