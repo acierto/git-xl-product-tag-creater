@@ -1,9 +1,9 @@
 import path from 'path';
 import {exec} from 'child_process';
 
-const getNewTagVersion = () => {
-    const cwd = process.cwd();
-    const folderName = path.basename(cwd);
+const getFolderName = () => path.basename(process.cwd());
+
+const getVersion = () => {
     const {argv} = process;
     const version = argv[2];
 
@@ -11,9 +11,13 @@ const getNewTagVersion = () => {
         throw 'Version is not specified. You have to specify a version name after a command delimited by a space.' +
         'I.e. git-xl-product-tag-creater v9.7.0';
     }
+    return version;
+}
 
+const getNewTagVersion = () => {
+    const version = getVersion();
     const tagVersionPart = version.slice(version.search(/\d/));
-    return `${folderName}-${tagVersionPart}`;
+    return `${getFolderName()}-${tagVersionPart}`;
 };
 
 const executeCommand = (command: string) =>
@@ -47,5 +51,8 @@ const checkIfTagExists = async (newTagVersion: string) => {
     const newTagVersion = getNewTagVersion();
     if (await checkIfTagExists(newTagVersion)) {
         await createTag(newTagVersion);
+    } else {
+        console.log(`Skipping creation of new tag due to missing tag ${getVersion()} in ${getFolderName()}. It's not
+        necessary a problem as this project could be not released before.`);
     }
 })();

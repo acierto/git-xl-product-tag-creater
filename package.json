@@ -1,6 +1,6 @@
 {
   "name": "git-xl-product-tag-creater",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create final xl product tag name",
   "main": "dist/index.js",
   "scripts": {
