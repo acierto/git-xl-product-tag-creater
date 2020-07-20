@@ -21,16 +21,16 @@ const getNewTagVersion = () => {
 };
 
 const executeCommand = (command: string) =>
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
         exec(command, (error, stdout, stderr) => {
             console.log(`Executing: ${command}`);
 
             if (error) {
                 console.log(`error: ${error.message}`);
-                reject(error);
+                resolve(error);
             } else if (stderr) {
                 console.log(`stderr: ${stderr}`);
-                reject(stderr);
+                resolve(stderr);
             } else {
                 resolve(stdout);
             }
@@ -38,8 +38,8 @@ const executeCommand = (command: string) =>
     });
 
 const checkIfTagExists = async (newTagVersion: string) => {
-    await executeCommand('git fetch --prune');
-    return '' !== await executeCommand(`git tag -l ${newTagVersion}`);
+    const result = await executeCommand(`git tag -l ${newTagVersion}`);
+    return '' !== result;
 }
 
 const createTag = async (newTagVersion: string) => {
@@ -53,6 +53,8 @@ const createTag = async (newTagVersion: string) => {
 }
 
 (async () => {
+    await executeCommand('git fetch --prune');
+
     const newTagVersion = getNewTagVersion();
     if (!await checkIfTagExists(getVersion())) {
         console.log(`Skipping creation of new tag due to missing tag ${getVersion()} in ${getFolderName()}. It's not
