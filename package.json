@@ -1,0 +1,35 @@
+{
+  "name": "git-xl-product-tag-creater",
+  "version": "1.0.0",
+  "description": "Create final xl product tag name",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "publish": "tsc && npm publish",
+    "start": "tsc && node ./dist/index.js v9.7.0",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:acierto/git-xl-product-tag-creater.git"
+  },
+  "author": "Bogdan Nechyporenko",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/acierto/git-xl-product-tag-creater/issues"
+  },
+  "bin": {
+    "git-xl-product-tag-creater": "./bin/global.js"
+  },
+  "preferGlobal": true,
+  "homepage": "https://github.com/acierto/git-xl-product-tag-creater#readme",
+  "devDependencies": {
+    "@types/node": "^14.0.14",
+    "ts-node": "8.10.2",
+    "tslint": "^6.1.2",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-plugin-prettier": "^2.3.0",
+    "typescript": "~3.9.5",
+    "typescript-tslint-plugin": "^0.5.5"
+  }
+}
