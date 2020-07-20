@@ -37,22 +37,29 @@ const executeCommand = (command: string) =>
         });
     });
 
-const createTag = async (newTagVersion: string) => {
-    await executeCommand(`git tag ${newTagVersion}`);
-    await executeCommand(`git push origin ${newTagVersion}`);
-}
-
 const checkIfTagExists = async (newTagVersion: string) => {
     await executeCommand('git fetch --prune');
     return '' !== await executeCommand(`git tag -l ${newTagVersion}`);
 }
 
+const createTag = async (newTagVersion: string) => {
+    if (await checkIfTagExists(newTagVersion)) {
+        console.log(`Skipping the creation of the tag ${newTagVersion} as it is already exist`);
+        return;
+    }
+
+    await executeCommand(`git tag ${newTagVersion}`);
+    await executeCommand(`git push origin ${newTagVersion}`);
+}
+
 (async () => {
     const newTagVersion = getNewTagVersion();
-    if (await checkIfTagExists(newTagVersion)) {
-        await createTag(newTagVersion);
-    } else {
+    if (!await checkIfTagExists(getVersion())) {
         console.log(`Skipping creation of new tag due to missing tag ${getVersion()} in ${getFolderName()}. It's not
         necessary a problem as this project could be not released before.`);
+        return;
     }
+
+    await executeCommand(`git checkout ${getVersion()}`);
+    await createTag(newTagVersion);
 })();
